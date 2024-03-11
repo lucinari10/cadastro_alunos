@@ -3,31 +3,31 @@
 #include <stdlib.h>
 #include <conio.h>
 #include <string.h>
-#include <sys/stat.h> /* para usar a fun��o ver_arquivo_existestat */
+#include <sys/stat.h> /* para usar a funï¿½ï¿½o ver_arquivo_existestat */
 
 /* Constantes  */
-#define  TAMSTR  	50
+#define  TAMSTR  	50+1
 #define  ARQUIVO_DE_ALUNOS 		"ALUNOS.DAT"
 
-/* Tipos de dados pr�-definidos */
+/* Tipos de dados prï¿½-definidos */
 
 /*----Lay-out do registro de Alunos------
 +---------------------------------------+
 |		MatricAluno		|	NomeAluno  	|
 +----------------------------------------+
-|	Código do Aluno	| 	 Nome do     |   
-| string (alfanum�rico; |     aluno     |
+|	CÃ³digo do Aluno	| 	 Nome do     |   
+| string (alfanumérico; |     aluno     |
 |     9 caracteres)	    |      	        |	  
 +---------------------------------------+
 */
 typedef struct
 {
-   	char  	MatricAluno;
+   	char  	MatricAluno[9+1];
    	char 	NomeAluno[TAMSTR];
 }
 registro_alunos;
 
-/* Prot�tipos de fun��es */
+/* Protï¿½tipos de funï¿½ï¿½es */
 int 				CalculaRegistrosArq		(void);
 registro_alunos    captura_aluno      		(void);
 void  				falha_abrir_arquivo 	(void);
@@ -42,14 +42,14 @@ int 				ver_arquivo_existe 		(void);
 void  				relatorio_alunos		(void);
 int   main ();
 
-/* Fun��es */
+/* Funï¿½ï¿½es */
 
 int CalculaRegistrosArq(void)
 {
 	int numero_registros;
 	FILE *Arq;
 	Arq = fopen (ARQUIVO_DE_ALUNOS, "r");
-	if ( Arq == NULL) /* O arquivo n�o existe */
+	if ( Arq == NULL) /* O arquivo nï¿½o existe */
 	   numero_registros = 0;
 	else
 	{   /* Calcula o tamanho do arquivo */
@@ -57,12 +57,12 @@ int CalculaRegistrosArq(void)
 		{
            printf("\nERRO ao calcular o tamanho de arquivo!\n");
            getch();
-           numero_registros = -1; /* -1 = ERRO GRAV�SSIMO!!!!!!!!!! */
+           numero_registros = -1; /* -1 = ERRO GRAVï¿½SSIMO!!!!!!!!!! */
         }
         else
 		{   /*...para que ftell 'conte' quantos bytes o arquivo tem */
 		    /* Dividindo-se o total de bytes do arquivo pelo tamanho de cada registro */
-		    /* tem-se o n�mero de registros do arquivo. */
+		    /* tem-se o nï¿½mero de registros do arquivo. */
 		    numero_registros =  ftell(Arq) / sizeof (registro_alunos);  /* 0 ou mais REGISTROS [OK] */
   	    }
   	    /* Fecha o arquivo */
@@ -82,8 +82,8 @@ registro_alunos    captura_alunos (void)
 {
    registro_alunos		rprod;
    printf ("\n------------ CADASTRO DE ALUNOS -----------------");
-   rprod.MatricAluno = CalculaRegistrosArq() + 1;
-   printf ("\n Codigo  : SP000000%i", rprod.MatricAluno);
+   sprintf (rprod.MatricAluno , "SP%07i", CalculaRegistrosArq() + 1 );
+   printf ("\n Codigo  : %s", rprod.MatricAluno);
    printf ("\n Nome    : "); fflush (stdin); gets(rprod.NomeAluno);
    return (rprod);
 }
@@ -128,21 +128,21 @@ void  sucesso_gravacao (registro_alunos R)
 {
    system ("color 2f"); /* Cor do texto branca com fundo verde */
    system ("cls");
-   printf ("\n\nRegistro [%3d][%s]", R.MatricAluno, R.NomeAluno);
+   printf ("\n\nRegistro [%s][%s]", R.MatricAluno, R.NomeAluno);
    printf ("\n gravado com sucesso!\n\n");
    Sleep(200);
 }
 
 void  descartar (registro_alunos R)
 {
-   printf ("\n\nRegistro descartado: [%3d][%s][R$%5.2f]", R.MatricAluno, R.NomeAluno);
+   printf ("\n\nRegistro descartado: [%s][%s]", R.MatricAluno, R.NomeAluno);
    getch();
 }
 
 char  confirmar (registro_alunos R)
 {
    char opc;
-   printf ("\n\n[%3d][%s]", R.MatricAluno, R.NomeAluno);
+   printf ("\n\n[%s][%s]", R.MatricAluno, R.NomeAluno);
    printf ("\n\nConfirma gravacao do registro? [S=sim]");
    fflush (stdin); opc = getche();
    return (opc);
@@ -216,7 +216,7 @@ void  relatorio_alunos	(void)
             	if ( ferror(A) )
 	           		falha_ler_arquivo();
 	        	if ( !feof(A) )
-	           		printf ("\n      SP000000%i    %-20s ", R.MatricAluno, R.NomeAluno);
+	           		printf ("\n   %s  %-20s ", R.MatricAluno, R.NomeAluno);
 	   		}
 	   	fclose(A);
    		}
@@ -230,10 +230,10 @@ void  relatorio_alunos	(void)
 int 	main	()
 {	
   char  opc;
-  /* O programa permanece em looping enquanto n�o for selecionada a op��o SAIR */
+  /* O programa permanece em looping enquanto nï¿½o for selecionada a opï¿½ï¿½o SAIR */
   do
   {
-    /* Mostra o menu de op��es */
+    /* Mostra o menu de opï¿½ï¿½es */
     do
 	{
         system ("color e0"); /* Cor do texto amarela com fundo preto */
@@ -250,7 +250,7 @@ int 	main	()
 	       opc != 'C' && opc != 'c' &&
 		   opc != 'R' && opc != 'r' );
 	
-	/* Dependendo da op��o, executa o cadastro ou mostra o relat�rio ou encerra o programa */
+	/* Dependendo da opï¿½ï¿½o, executa o cadastro ou mostra o relatï¿½rio ou encerra o programa */
 	switch (opc)
 	{
 		case 'C': case 'c': cadastrar();			break;
